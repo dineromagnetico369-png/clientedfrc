@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema Bloqueado</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .mensaje-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .icono {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .mensaje-personalizado {
+            background: #f8f9fa;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            font-style: italic;
+        }
+
+        .codigo-estado {
+            font-family: monospace;
+            background: #2c3e50;
+            color: #27ae60;
+            padding: 8px 15px;
+            border-radius: 5px;
+            display: inline-block;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .fecha {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="mensaje-container">
+        <div class="icono">🔒</div>
+        <h1>Acceso Bloqueado</h1>
+        <p>El administrador ha restringido temporalmente el acceso a esta aplicación.</p>
+        
+        <div class="mensaje-personalizado" id="mensajePersonalizado">
+            Cargando mensaje del administrador...
+        </div>
+        
+        <p><strong>Importante:</strong> Tus datos guardados NO se han perdido. Una vez que el administrador reactive el sistema, podrás acceder normalmente a toda tu información.</p>
+        
+        <div class="codigo-estado" id="codigoEstado">Código: 403 - Acceso Denegado</div>
+        
+        <button onclick="window.location.reload()">🔄 Intentar de nuevo</button>
+        
+        <div class="fecha" id="fechaBloqueo"></div>
+    </div>
+
+    <script>
+        // Cargar mensaje personalizado desde el servidor
+        async function cargarMensaje() {
+            try {
+                const response = await fetch('/config/mensaje.json?' + Date.now());
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('mensajePersonalizado').innerHTML = data.mensaje || 'El administrador ha bloqueado el acceso.';
+                    if (data.fecha) {
+                        document.getElementById('fechaBloqueo').innerHTML = 'Última actualización: ' + new Date(data.fecha).toLocaleString();
+                    }
+                }
+            } catch (error) {
+                document.getElementById('mensajePersonalizado').innerHTML = 'El sistema está temporalmente fuera de servicio. Por favor, intenta más tarde.';
+            }
+        }
+        
+        cargarMensaje();
+        
+        // Intentar recargar cada 30 segundos (por si el admin reactiva)
+        setInterval(() => {
+            window.location.reload();
+        }, 30000);
+    </script>
+</body>
+</html>

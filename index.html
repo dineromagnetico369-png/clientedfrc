@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Control de Productos</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', 'Calibri', Arial, sans-serif;
+        background-image: url('img/background.png');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        padding: 20px;
+        margin: 0;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: auto;
+    }
+
+    /* Pantalla de bloqueo */
+    .pantalla-bloqueo {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        z-index: 100000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .pantalla-bloqueo.activa {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .mensaje-bloqueo {
+        text-align: center;
+        color: white;
+        animation: pulse 2s infinite;
+    }
+
+    .mensaje-bloqueo h1 {
+        font-size: 3rem;
+        margin-bottom: 20px;
+    }
+
+    .btn-activar-desde-bloqueo {
+        margin-top: 30px;
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 1.2rem;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: bold;
+    }
+
+    .btn-activar-desde-bloqueo:hover {
+        background: #1e8449;
+        transform: scale(1.05);
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.05); opacity: 1; }
+        100% { transform: scale(1); opacity: 0.8; }
+    }
+
+    /* Popup de contraseña */
+    .popup-password {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.9);
+        z-index: 200000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        visibility: hidden;
+        opacity: 0;
+        transition: all 0.3s;
+    }
+
+    .popup-password.activo {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .password-contenido {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+    }
+
+    .password-contenido h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+    }
+
+    .password-contenido input {
+        width: 100%;
+        padding: 12px;
+        margin: 20px 0;
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .password-contenido button {
+        background: #2c3e50;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .password-contenido button:hover {
+        background: #1a252f;
+    }
+
+    .error-password {
+        color: #e74c3c;
+        margin-top: 10px;
+        font-size: 14px;
+    }
+
+    /* Panel de control flotante */
+    .btn-abrir-panel {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #e67e22;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 50px;
+        cursor: pointer;
+        z-index: 15000;
+        font-weight: bold;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        transition: all 0.3s;
+    }
+
+    .btn-abrir-panel:hover {
+        background: #d35400;
+        transform: scale(1.05);
+    }
+
+    /* Popup del panel */
+    .popup-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        z-index: 200000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        visibility: hidden;
+        opacity: 0;
+        transition: all 0.3s;
+    }
+
+    .popup-panel.activo {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .panel-contenido {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        width: 350px;
+        border-radius: 20px;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .panel-contenido h3 {
+        color: white;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+    }
+
+    .panel-contenido .botones-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .btn-panel {
+        padding: 12px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-activar {
+        background: #27ae60;
+        color: white;
+    }
+
+    .btn-activar:hover {
+        background: #1e8449;
+    }
+
+    .btn-desactivar {
+        background: #e74c3c;
+        color: white;
+    }
+
+    .btn-desactivar:hover {
+        background: #c0392b;
+    }
+
+    .btn-cerrar-panel {
+        background: #7f8c8d;
+        color: white;
+        margin-top: 10px;
+    }
+
+    .estado-panel {
+        background: rgba(255,255,255,0.1);
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 20px;
+    }
+
+    .estado-panel p {
+        color: white;
+        margin-bottom: 10px;
+    }
+
+    .estado-indicador {
+        font-size: 1.2rem;
+        font-weight: bold;
+        padding: 8px;
+        border-radius: 8px;
+    }
+
+    .estado-activo {
+        background: #27ae60;
+        color: white;
+    }
+
+    .estado-inactivo {
+        background: #e74c3c;
+        color: white;
+    }
+
+    .contenido-principal {
+        position: relative;
+        z-index: 1;
+    }
+
+    h2 {
+        text-align: center;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        margin-bottom: 20px;
+    }
+
+    .contenedor-botones {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .boton-guardar, .boton-exportar, .boton-administrar {
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: none;
+        color: white;
+    }
+
+    .boton-guardar { background: #2c3e50; }
+    .boton-guardar:hover { background: #1a252f; }
+    .boton-exportar { background: #27ae60; }
+    .boton-exportar:hover { background: #1e8449; }
+    .boton-administrar { background: #e67e22; }
+    .boton-administrar:hover { background: #d35400; }
+
+    .mensaje {
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .mensaje-exito { background: #d4edda; color: #155724; }
+    .mensaje-error { background: #f8d7da; color: #721c24; }
+
+    .popup-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        z-index: 30000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .popup-contenido {
+        background: white;
+        width: 500px;
+        max-width: 90%;
+        max-height: 80%;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .popup-header {
+        background: #2c3e50;
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .popup-header .cerrar {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .popup-body {
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .form-agregar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .form-agregar input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .btn-agregar-popup {
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .lista-codigos-popup {
+        list-style: none;
+    }
+
+    .lista-codigos-popup li {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .btn-eliminar {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 5px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    th {
+        background: #2c3e50;
+        color: white;
+        padding: 10px;
+        border: 1px solid #3e5a6b;
+    }
+
+    td {
+        padding: 8px;
+        border: 1px solid #ddd;
+        text-align: center;
+        background: white;
+    }
+
+    td[contenteditable="true"]:focus {
+        outline: 2px solid #3498db;
+        background: #e8f0fe;
+    }
+
+    .total {
+        color: #2e7d32;
+        font-size: 18px;
+        font-weight: bold;
+        background: #e8f5e9;
+    }
+</style>
+</head>
+
+<body>
+
+<div id="pantallaBloqueo" class="pantalla-bloqueo">
+    <div class="mensaje-bloqueo">
+        <h1>🔒 Página Bloqueada</h1>
+        <p>El sistema ha sido desactivado</p>
+        <button class="btn-activar-desde-bloqueo" id="btnActivarDesdeBloqueo">🔓 HAZ CLIC PARA ACTIVAR</button>
+    </div>
+</div>
+
+<button class="btn-abrir-panel" id="btnAbrirPanel">🎮 Panel de Control</button>
+
+<div class="popup-password" id="popupPassword">
+    <div class="password-contenido">
+        <h2>🔐 ACCESO RESTRINGIDO</h2>
+        <p>Ingrese la contraseña de administrador</p>
+        <input type="password" id="inputPassword" placeholder="Contraseña" autocomplete="off">
+        <button id="btnVerificarPassword">Verificar</button>
+        <div id="errorPassword" class="error-password"></div>
+    </div>
+</div>
+
+<div class="popup-panel" id="popupPanel">
+    <div class="panel-contenido">
+        <h3>🎮 Panel de Control</h3>
+        <div class="botones-panel">
+            <button class="btn-panel btn-activar" id="btnActivarPanel">🔓 ACTIVAR TODO</button>
+            <button class="btn-panel btn-desactivar" id="btnDesactivarPanel">🔒 DESACTIVAR TODO</button>
+        </div>
+        <div class="estado-panel">
+            <p>📊 Estado actual:</p>
+            <div class="estado-indicador" id="estadoIndicadorPanel">Cargando...</div>
+        </div>
+        <button class="btn-panel btn-cerrar-panel" id="btnCerrarPanel">Cerrar</button>
+    </div>
+</div>
+
+<div class="contenido-principal" id="contenidoPrincipal">
+    <h2>Control de Productos</h2>
+    <div class="contenedor-botones">
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="boton-guardar" id="btnGuardar">💾 Guardar datos</button>
+            <button class="boton-administrar" id="btnAdministrar">⚙️ Administrar Códigos</button>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <button class="boton-exportar" id="btnExportar">📊 Exportar a Excel</button>
+            <div id="mensaje" class="mensaje"></div>
+        </div>
+    </div>
+    <table id="tabla">
+        <thead><tr><th>ID</th><th>Depósitos</th><th>Por donde recibe</th><th>Nombre del producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Subtotal</th><th>Precio de código</th><th>Código</th></tr></thead>
+        <tbody id="cuerpoTabla"></tbody>
+        <tfoot><tr><td colspan="6" style="text-align: right; font-weight: bold;">TOTAL GENERAL:</td><td class="total" id="totalSubtotal">$0</td><td id="totalPrecioCodigo"></td><td></td></tr></tfoot>
+    </table>
+</div>
+
+<div id="popupCodigos" class="popup-overlay">
+    <div class="popup-contenido">
+        <div class="popup-header"><h3>📋 Administrar Códigos</h3><button class="cerrar" id="cerrarPopup">&times;</button></div>
+        <div class="popup-body">
+            <div class="form-agregar">
+                <input type="text" id="popupNuevoCodigo" placeholder="Código" autocomplete="off">
+                <input type="number" id="popupNuevoPrecio" placeholder="Precio" autocomplete="off">
+                <button class="btn-agregar-popup" id="btnAgregarPopup">➕ Agregar</button>
+            </div>
+            <div id="listaCodigosContainer"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// CONTRASEÑA CORRECTA
+const CONTRASENA_CORRECTA = "DIEGO FERNANDO RANGEL CALDERON 2026 - 1995";
+
+// Estado de la página
+let paginaActiva = true;
+let autenticado = false;
+
+// Función para guardar el estado en localStorage
+function guardarEstadoLocal(activo) {
+    localStorage.setItem('paginaActiva', activo ? 'true' : 'false');
+}
+
+function cargarEstadoLocal() {
+    const estado = localStorage.getItem('paginaActiva');
+    if (estado === null) {
+        guardarEstadoLocal(true);
+        return true;
+    }
+    return estado === 'true';
+}
+
+// Aplicar estado visual
+function aplicarEstadoVisual(activo) {
+    const pantallaBloqueo = document.getElementById('pantallaBloqueo');
+    const contenido = document.getElementById('contenidoPrincipal');
+    const indicador = document.getElementById('estadoIndicadorPanel');
+    
+    if (activo) {
+        pantallaBloqueo.classList.remove('activa');
+        contenido.style.visibility = 'visible';
+        if (indicador) {
+            indicador.innerHTML = 'ACTIVO';
+            indicador.className = 'estado-indicador estado-activo';
+        }
+    } else {
+        pantallaBloqueo.classList.add('activa');
+        contenido.style.visibility = 'hidden';
+        if (indicador) {
+            indicador.innerHTML = 'INACTIVO';
+            indicador.className = 'estado-indicador estado-inactivo';
+        }
+    }
+}
+
+// Activar/Desactivar
+function activarPagina() {
+    paginaActiva = true;
+    guardarEstadoLocal(true);
+    aplicarEstadoVisual(true);
+    mostrarMensaje('✅ Sistema ACTIVADO correctamente', 'exito');
+}
+
+function desactivarPagina() {
+    paginaActiva = false;
+    guardarEstadoLocal(false);
+    aplicarEstadoVisual(false);
+    guardarDatos();
+    mostrarMensaje('🔒 Sistema DESACTIVADO', 'exito');
+}
+
+// Popup de contraseña
+function mostrarPopupPassword() {
+    document.getElementById('popupPassword').classList.add('activo');
+    document.getElementById('inputPassword').value = '';
+    document.getElementById('errorPassword').innerHTML = '';
+}
+
+function ocultarPopupPassword() {
+    document.getElementById('popupPassword').classList.remove('activo');
+}
+
+function verificarPassword() {
+    const password = document.getElementById('inputPassword').value;
+    if (password === CONTRASENA_CORRECTA) {
+        autenticado = true;
+        ocultarPopupPassword();
+        mostrarPopupPanel();
+        document.getElementById('errorPassword').innerHTML = '';
+    } else {
+        document.getElementById('errorPassword').innerHTML = '❌ Contraseña incorrecta';
+    }
+}
+
+// Popup del panel
+function mostrarPopupPanel() {
+    if (!autenticado) {
+        mostrarPopupPassword();
+        return;
+    }
+    actualizarEstadoIndicador();
+    document.getElementById('popupPanel').classList.add('activo');
+}
+
+function ocultarPopupPanel() {
+    document.getElementById('popupPanel').classList.remove('activo');
+}
+
+function actualizarEstadoIndicador() {
+    const indicador = document.getElementById('estadoIndicadorPanel');
+    const activo = cargarEstadoLocal();
+    if (activo) {
+        indicador.innerHTML = 'ACTIVO';
+        indicador.className = 'estado-indicador estado-activo';
+    } else {
+        indicador.innerHTML = 'INACTIVO';
+        indicador.className = 'estado-indicador estado-inactivo';
+    }
+}
+
+// ========== FUNCIONES DE PRODUCTOS ==========
+const metodos = ["EFECTIVO", "NEQUI", "DAVIPLATA", "DAVIVIENDA", "BANCOLOMBIA", "NU BANK", "BRE-B"];
+let codigosPrecios = {};
+
+function cargarCodigos() {
+    const guardado = localStorage.getItem("codigosPrecios");
+    codigosPrecios = guardado ? JSON.parse(guardado) : { "#123": 10000, "#1234": 20000, "PAN": 5000, "LECHE": 4000, "HUEVOS": 12000 };
+}
+
+function guardarCodigos() { localStorage.setItem("codigosPrecios", JSON.stringify(codigosPrecios)); }
+
+function actualizarListaPopup() {
+    const container = document.getElementById("listaCodigosContainer");
+    if (!container) return;
+    if (Object.keys(codigosPrecios).length === 0) {
+        container.innerHTML = '<div class="sin-codigos">No hay códigos</div>';
+        return;
+    }
+    let html = '<ul class="lista-codigos-popup">';
+    for (const [codigo, precio] of Object.entries(codigosPrecios)) {
+        html += `<li><span>${codigo} - $${precio.toLocaleString("es-CO")}</span><button class="btn-eliminar" data-codigo="${codigo}">🗑️</button></li>`;
+    }
+    html += '</ul>';
+    container.innerHTML = html;
+    document.querySelectorAll('.btn-eliminar').forEach(btn => {
+        btn.addEventListener('click', () => { delete codigosPrecios[btn.dataset.codigo]; guardarCodigos(); actualizarListaPopup(); mostrarMensaje('✅ Código eliminado', 'exito'); });
+    });
+}
+
+function agregarCodigo() {
+    const codigo = document.getElementById("popupNuevoCodigo").value.trim().toUpperCase();
+    const precio = parseFloat(document.getElementById("popupNuevoPrecio").value);
+    if (!codigo) { mostrarMensaje("❌ Ingresa un código", "error"); return; }
+    if (isNaN(precio) || precio <= 0) { mostrarMensaje("❌ Precio válido", "error"); return; }
+    codigosPrecios[codigo] = precio;
+    guardarCodigos();
+    actualizarListaPopup();
+    document.getElementById("popupNuevoCodigo").value = "";
+    document.getElementById("popupNuevoPrecio").value = "";
+    mostrarMensaje(`✅ ${codigo} agregado`, "exito");
+}
+
+function crearFilas(cantidad = 100) {
+    const tbody = document.getElementById("cuerpoTabla");
+    let html = "";
+    for (let i = 0; i < cantidad; i++) {
+        let metodo = i < metodos.length ? metodos[i] : "";
+        html += `<tr><td>${i+1}</td><td>${metodo}</td><td contenteditable="true" class="recibe"></td><td contenteditable="true" class="nombre-producto"></td><td contenteditable="true" class="cantidad">0</td><td contenteditable="true" class="precio-unitario">0</td><td class="subtotal">$0</td><td contenteditable="true" class="precio-codigo"></td><td contenteditable="true"></td></tr>`;
+    }
+    tbody.innerHTML = html;
+    inicializarAutocomplete();
+}
+
+function limpiarNumero(valor) {
+    if (!valor) return 0;
+    let texto = String(valor).trim().replace('$', '').replace(/\s/g, '').replace(/\./g, '').replace(/,/g, '');
+    return isNaN(parseFloat(texto)) ? 0 : parseFloat(texto);
+}
+
+function calcularSubtotal(fila) {
+    let cantidad = limpiarNumero(fila.querySelector(".cantidad").innerText);
+    let precio = limpiarNumero(fila.querySelector(".precio-unitario").innerText);
+    let subtotal = cantidad * precio;
+    fila.querySelector(".subtotal").innerText = "$ " + subtotal.toLocaleString("es-CO");
+    return subtotal;
+}
+
+function calcularTotalGeneral() {
+    let total = 0;
+    document.querySelectorAll(".subtotal").forEach(celda => { total += limpiarNumero(celda.innerText); });
+    document.getElementById("totalSubtotal").innerText = "$ " + total.toLocaleString("es-CO");
+    return total;
+}
+
+function actualizarPrecioPorCodigo(celda, fila) {
+    let codigo = celda.innerText.trim().toUpperCase();
+    let precioCelda = fila.querySelector(".precio-unitario");
+    if (codigosPrecios[codigo]) {
+        precioCelda.innerText = codigosPrecios[codigo].toString();
+        calcularSubtotal(fila);
+        calcularTotalGeneral();
+    } else if (codigo) {
+        mostrarMensaje(`⚠️ Código ${codigo} no encontrado`, "error");
+    }
+}
+
+function inicializarAutocomplete() {
+    document.querySelectorAll(".recibe").forEach(celda => {
+        if (!celda.querySelector('.autocomplete-container')) {
+            let contenido = celda.innerHTML;
+            celda.innerHTML = `<div class="autocomplete-container"><div class="autocomplete-text">${contenido}</div><div class="autocomplete-suggestions"></div></div>`;
+            let textDiv = celda.querySelector('.autocomplete-text');
+            let suggestionsDiv = celda.querySelector('.autocomplete-suggestions');
+            textDiv.contentEditable = "true";
+            textDiv.addEventListener('input', (e) => {
+                let busqueda = textDiv.innerText;
+                if (!busqueda.trim()) { suggestionsDiv.style.display = 'none'; return; }
+                let opciones = metodos.filter(m => m.toLowerCase().includes(busqueda.toLowerCase()));
+                if (opciones.length === 0) { suggestionsDiv.style.display = 'none'; return; }
+                suggestionsDiv.innerHTML = '';
+                opciones.forEach(opcion => {
+                    let div = document.createElement('div');
+                    div.className = 'autocomplete-suggestion';
+                    div.innerText = opcion;
+                    div.onclick = () => { textDiv.innerText = opcion; suggestionsDiv.style.display = 'none'; celda.dispatchEvent(new Event('input')); };
+                    suggestionsDiv.appendChild(div);
+                });
+                suggestionsDiv.style.display = 'block';
+            });
+            textDiv.addEventListener('blur', () => setTimeout(() => suggestionsDiv.style.display = 'none', 200));
+        }
+    });
+}
+
+function guardarDatos() {
+    let datos = [];
+    document.querySelectorAll("#cuerpoTabla tr").forEach(fila => {
+        let celdas = fila.querySelectorAll("td");
+        let recibeCelda = celdas[2];
+        let recibe = recibeCelda.querySelector('.autocomplete-text') ? recibeCelda.querySelector('.autocomplete-text').innerText : recibeCelda.innerText;
+        datos.push({
+            depositos: celdas[1].innerText,
+            recibe: recibe,
+            nombreProducto: celdas[3].innerText,
+            cantidad: celdas[4].innerText,
+            precioUnitario: celdas[5].innerText,
+            precioCodigo: celdas[7].innerText,
+            codigo: celdas[8].innerText
+        });
+    });
+    localStorage.setItem("datosProductos", JSON.stringify(datos));
+    mostrarMensaje("✅ Datos guardados", "exito");
+}
+
+function cargarDatos() {
+    let datos = localStorage.getItem("datosProductos");
+    if (datos) {
+        datos = JSON.parse(datos);
+        let filas = document.querySelectorAll("#cuerpoTabla tr");
+        filas.forEach((fila, i) => {
+            if (i < datos.length) {
+                let celdas = fila.querySelectorAll("td");
+                let recibeCelda = celdas[2];
+                if (recibeCelda.querySelector('.autocomplete-text')) {
+                    recibeCelda.querySelector('.autocomplete-text').innerText = datos[i].recibe || "";
+                } else { recibeCelda.innerText = datos[i].recibe || ""; }
+                celdas[3].innerText = datos[i].nombreProducto || "";
+                celdas[4].innerText = datos[i].cantidad || "0";
+                celdas[5].innerText = datos[i].precioUnitario || "0";
+                celdas[7].innerText = datos[i].precioCodigo || "";
+                celdas[8].innerText = datos[i].codigo || "";
+                calcularSubtotal(fila);
+            }
+        });
+        calcularTotalGeneral();
+    }
+}
+
+function exportarAExcel() {
+    let tabla = document.getElementById("tabla").cloneNode(true);
+    tabla.querySelectorAll('.autocomplete-container').forEach(c => { let text = c.querySelector('.autocomplete-text')?.innerText || ""; c.parentElement.innerText = text; });
+    tabla.querySelectorAll('[contenteditable]').forEach(c => c.removeAttribute("contenteditable"));
+    let html = `<html><head><meta charset="UTF-8"><title>Control_Productos</title><style>th{background:#2c3e50;color:white}td{border:1px solid #ddd}</style></head><body><h2>Control de Productos</h2>${tabla.outerHTML}</body></html>`;
+    let blob = new Blob([html], { type: "application/vnd.ms-excel" });
+    let link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `Control_Productos_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.xls`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    mostrarMensaje("✅ Exportado a Excel", "exito");
+}
+
+function mostrarMensaje(texto, tipo) {
+    let msgDiv = document.getElementById("mensaje");
+    msgDiv.innerHTML = texto;
+    msgDiv.className = `mensaje mensaje-${tipo}`;
+    setTimeout(() => { if (msgDiv.innerHTML === texto) { msgDiv.innerHTML = ""; msgDiv.className = "mensaje"; } }, 3000);
+}
+
+function abrirPopup() { actualizarListaPopup(); document.getElementById("popupCodigos").style.display = "flex"; }
+function cerrarPopup() { document.getElementById("popupCodigos").style.display = "none"; }
+
+// Eventos
+document.getElementById("btnAbrirPanel").onclick = mostrarPopupPassword;
+document.getElementById("btnVerificarPassword").onclick = verificarPassword;
+document.getElementById("inputPassword").onkeypress = (e) => { if (e.key === 'Enter') verificarPassword(); };
+document.getElementById("btnActivarPanel").onclick = () => { activarPagina(); ocultarPopupPanel(); };
+document.getElementById("btnDesactivarPanel").onclick = () => { desactivarPagina(); ocultarPopupPanel(); };
+document.getElementById("btnCerrarPanel").onclick = ocultarPopupPanel;
+document.getElementById("btnActivarDesdeBloqueo").onclick = mostrarPopupPassword;
+document.getElementById("btnGuardar").onclick = guardarDatos;
+document.getElementById("btnExportar").onclick = exportarAExcel;
+document.getElementById("btnAdministrar").onclick = abrirPopup;
+document.getElementById("cerrarPopup").onclick = cerrarPopup;
+document.getElementById("btnAgregarPopup").onclick = agregarCodigo;
+
+document.getElementById("tabla").addEventListener("input", function(e) {
+    if (e.target.classList.contains("cantidad") || e.target.classList.contains("precio-unitario")) {
+        let fila = e.target.closest("tr");
+        calcularSubtotal(fila);
+        calcularTotalGeneral();
+    }
+    if (e.target.classList.contains("nombre-producto")) {
+        let fila = e.target.closest("tr");
+        actualizarPrecioPorCodigo(e.target, fila);
+    }
+});
+
+// Inicializar
+crearFilas(100);
+cargarCodigos();
+cargarDatos();
+calcularTotalGeneral();
+
+// Cargar estado guardado
+const estadoInicial = cargarEstadoLocal();
+paginaActiva = estadoInicial;
+aplicarEstadoVisual(estadoInicial);
+</script>
+
+</body>
+</html>
