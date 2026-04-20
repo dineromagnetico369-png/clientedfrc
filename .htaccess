@@ -1,26 +1,77 @@
 # .htaccess - Control de acceso al sitio
+# Este archivo debe estar en la RAIZ de tu sitio web
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteBase /
     
-    # Verificar si existe el archivo de bloqueo
-    RewriteCond %{DOCUMENT_ROOT}/../config/estado.txt -f
-    RewriteCond %{DOCUMENT_ROOT}/../config/estado.txt = "bloqueado"
-    RewriteRule ^(.*)$ /mantenimiento.html [L]
+    # === BLOQUEO PRINCIPAL ===
+    # Verificar si el archivo estado.txt existe y contiene "bloqueado"
+    RewriteCond %{DOCUMENT_ROOT}/config/estado.txt -f
+    RewriteCond %{DOCUMENT_ROOT}/config/estado.txt = "bloqueado"
+    
+    # Excluir archivos y carpetas que NO deben bloquearse
+    # (para que el administrador pueda seguir accediendo)
+    RewriteCond %{REQUEST_URI} !^/control-acceso\.php
+    RewriteCond %{REQUEST_URI} !^/config/
+    RewriteCond %{REQUEST_URI} !^/mensaje-bloqueo\.html
+    RewriteCond %{REQUEST_URI} !^/img/
+    
+    # Redirigir TODAS las páginas a mensaje-bloqueo.html
+    RewriteRule ^(.*)$ /mensaje-bloqueo.html [L]
+    
+    # === REDIRECCIÓN ESPECÍFICA PARA index.html ===
+    RewriteCond %{DOCUMENT_ROOT}/config/estado.txt -f
+    RewriteCond %{DOCUMENT_ROOT}/config/estado.txt = "bloqueado"
+    RewriteRule ^(index\.html|index\.php|$)$ /mensaje-bloqueo.html [L]
+    
 </IfModule>
 
-# Proteger archivos sensibles
-<FilesMatch "^\.">
+# === PROTEGER CARPETA CONFIG ===
+# Nadie puede acceder directamente a los archivos de configuración
+<IfModule mod_authz_core.c>
+    <Directory "config">
+        Require all denied
+    </Directory>
+</IfModule>
+
+# Versión alternativa para Apache 2.2
+<IfModule !mod_authz_core.c>
+    <Directory "config">
+        Order allow,deny
+        Deny from all
+    </Directory>
+</IfModule>
+
+# === PROTEGER ARCHIVOS SENSIBLES ===
+<FilesMatch "\.(json|txt|ini|log|sql|bak|config)$">
     Order allow,deny
     Deny from all
 </FilesMatch>
 
-# Bloquear acceso a carpetas específicas
-RedirectMatch 404 /\.git
-RedirectMatch 404 /config
+<FilesMatch "^\.ht">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
 
-# Personalizar página de error 403 (acceso denegado)
+# === PÁGINAS DE ERROR PERSONALIZADAS ===
 ErrorDocument 403 /mensaje-bloqueo.html
+ErrorDocument 404 /mensaje-bloqueo.html
+ErrorDocument 503 /mensaje-bloqueo.html
 
-# Personalizar página de error 503 (servicio no disponible)
-ErrorDocument 503 /mantenimiento.html
+# === CONFIGURACIÓN DE CACHÉ ===
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/html "access plus 0 seconds"
+    ExpiresByType text/css "access plus 7 days"
+    ExpiresByType image/png "access plus 30 days"
+    ExpiresByType image/jpg "access plus 30 days"
+    ExpiresByType image/jpeg "access plus 30 days"
+</IfModule>
+
+# === HEADERS DE SEGURIDAD ===
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "DENY"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
