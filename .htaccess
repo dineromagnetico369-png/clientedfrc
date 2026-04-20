@@ -1,0 +1,26 @@
+# .htaccess - Control de acceso al sitio
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Verificar si existe el archivo de bloqueo
+    RewriteCond %{DOCUMENT_ROOT}/../config/estado.txt -f
+    RewriteCond %{DOCUMENT_ROOT}/../config/estado.txt = "bloqueado"
+    RewriteRule ^(.*)$ /mantenimiento.html [L]
+</IfModule>
+
+# Proteger archivos sensibles
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Bloquear acceso a carpetas específicas
+RedirectMatch 404 /\.git
+RedirectMatch 404 /config
+
+# Personalizar página de error 403 (acceso denegado)
+ErrorDocument 403 /mensaje-bloqueo.html
+
+# Personalizar página de error 503 (servicio no disponible)
+ErrorDocument 503 /mantenimiento.html
