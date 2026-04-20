@@ -21,29 +21,27 @@
         padding: 20px;
         margin: 0;
         min-height: 100vh;
-        position: relative;
-        overflow-x: auto;
     }
 
-    /* Pantalla de bloqueo */
-    .pantalla-bloqueo {
+    /* Pantalla de bloqueo TOTAL */
+    .pantalla-bloqueo-total {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-        z-index: 100000;
+        z-index: 999999;
         display: flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
         opacity: 0;
         visibility: hidden;
-        transition: opacity 0.5s ease, visibility 0.5s ease;
+        transition: all 0.5s ease;
     }
 
-    .pantalla-bloqueo.activa {
+    .pantalla-bloqueo-total.activa {
         opacity: 1;
         visibility: visible;
     }
@@ -52,6 +50,7 @@
         text-align: center;
         color: white;
         animation: pulse 2s infinite;
+        padding: 20px;
     }
 
     .mensaje-bloqueo h1 {
@@ -59,8 +58,12 @@
         margin-bottom: 20px;
     }
 
-    .btn-activar-desde-bloqueo {
-        margin-top: 30px;
+    .mensaje-bloqueo p {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+
+    .btn-activar {
         background: #27ae60;
         color: white;
         border: none;
@@ -72,7 +75,7 @@
         font-weight: bold;
     }
 
-    .btn-activar-desde-bloqueo:hover {
+    .btn-activar:hover {
         background: #1e8449;
         transform: scale(1.05);
     }
@@ -83,73 +86,11 @@
         100% { transform: scale(1); opacity: 0.8; }
     }
 
-    /* Popup de contraseña */
-    .popup-password {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.9);
-        z-index: 200000;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        visibility: hidden;
-        opacity: 0;
-        transition: all 0.3s;
+    .contenido-principal {
+        position: relative;
+        z-index: 1;
     }
 
-    .popup-password.activo {
-        visibility: visible;
-        opacity: 1;
-    }
-
-    .password-contenido {
-        background: white;
-        padding: 40px;
-        border-radius: 20px;
-        text-align: center;
-        max-width: 400px;
-        width: 90%;
-    }
-
-    .password-contenido h2 {
-        color: #2c3e50;
-        margin-bottom: 20px;
-    }
-
-    .password-contenido input {
-        width: 100%;
-        padding: 12px;
-        margin: 20px 0;
-        border: 2px solid #ddd;
-        border-radius: 10px;
-        font-size: 16px;
-        text-align: center;
-    }
-
-    .password-contenido button {
-        background: #2c3e50;
-        color: white;
-        border: none;
-        padding: 12px 30px;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 16px;
-    }
-
-    .password-contenido button:hover {
-        background: #1a252f;
-    }
-
-    .error-password {
-        color: #e74c3c;
-        margin-top: 10px;
-        font-size: 14px;
-    }
-
-    /* Panel de control flotante */
     .btn-abrir-panel {
         position: fixed;
         bottom: 20px;
@@ -160,26 +101,20 @@
         padding: 12px 20px;
         border-radius: 50px;
         cursor: pointer;
-        z-index: 15000;
+        z-index: 10000;
         font-weight: bold;
         box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        transition: all 0.3s;
     }
 
-    .btn-abrir-panel:hover {
-        background: #d35400;
-        transform: scale(1.05);
-    }
-
-    /* Popup del panel */
-    .popup-panel {
+    /* Popup de contraseña */
+    .popup-overlay {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.7);
-        z-index: 200000;
+        background: rgba(0,0,0,0.95);
+        z-index: 1000000;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -188,108 +123,52 @@
         transition: all 0.3s;
     }
 
-    .popup-panel.activo {
+    .popup-overlay.activo {
         visibility: visible;
         opacity: 1;
     }
 
-    .panel-contenido {
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-        width: 350px;
+    .popup-contenido {
+        background: white;
+        padding: 40px;
         border-radius: 20px;
-        padding: 30px;
         text-align: center;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        max-width: 400px;
+        width: 90%;
     }
 
-    .panel-contenido h3 {
-        color: white;
+    .popup-contenido h2 {
+        color: #2c3e50;
         margin-bottom: 20px;
-        font-size: 1.5rem;
     }
 
-    .panel-contenido .botones-panel {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        margin-bottom: 30px;
-    }
-
-    .btn-panel {
+    .popup-contenido input {
+        width: 100%;
         padding: 12px;
-        font-size: 1.1rem;
-        font-weight: bold;
+        margin: 20px 0;
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .popup-contenido button {
+        background: #2c3e50;
+        color: white;
         border: none;
+        padding: 12px 30px;
         border-radius: 10px;
         cursor: pointer;
-        transition: all 0.3s;
+        font-size: 16px;
     }
 
-    .btn-activar {
-        background: #27ae60;
-        color: white;
-    }
-
-    .btn-activar:hover {
-        background: #1e8449;
-    }
-
-    .btn-desactivar {
-        background: #e74c3c;
-        color: white;
-    }
-
-    .btn-desactivar:hover {
-        background: #c0392b;
-    }
-
-    .btn-cerrar-panel {
-        background: #7f8c8d;
-        color: white;
+    .error-password {
+        color: #e74c3c;
         margin-top: 10px;
     }
 
-    .estado-panel {
-        background: rgba(255,255,255,0.1);
-        border-radius: 10px;
-        padding: 15px;
-        margin-top: 20px;
-    }
-
-    .estado-panel p {
-        color: white;
-        margin-bottom: 10px;
-    }
-
-    .estado-indicador {
-        font-size: 1.2rem;
-        font-weight: bold;
-        padding: 8px;
-        border-radius: 8px;
-    }
-
-    .estado-activo {
-        background: #27ae60;
-        color: white;
-    }
-
-    .estado-inactivo {
-        background: #e74c3c;
-        color: white;
-    }
-
-    .contenido-principal {
-        position: relative;
-        z-index: 1;
-    }
-
-    h2 {
-        text-align: center;
-        color: white;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        margin-bottom: 20px;
-    }
-
+    /* Resto de estilos de la tabla */
+    h2 { text-align: center; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin-bottom: 20px; }
     .contenedor-botones {
         display: flex;
         justify-content: space-between;
@@ -298,193 +177,75 @@
         background: rgba(255, 255, 255, 0.95);
         padding: 15px;
         border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.2);
         flex-wrap: wrap;
         gap: 10px;
     }
-
     .boton-guardar, .boton-exportar, .boton-administrar {
         padding: 10px 20px;
         font-size: 16px;
         border-radius: 5px;
         cursor: pointer;
-        transition: all 0.3s;
         border: none;
         color: white;
     }
-
     .boton-guardar { background: #2c3e50; }
-    .boton-guardar:hover { background: #1a252f; }
     .boton-exportar { background: #27ae60; }
-    .boton-exportar:hover { background: #1e8449; }
     .boton-administrar { background: #e67e22; }
-    .boton-administrar:hover { background: #d35400; }
-
-    .mensaje {
-        padding: 10px;
-        border-radius: 5px;
-        font-size: 14px;
-    }
-
+    .mensaje { padding: 10px; border-radius: 5px; font-size: 14px; }
     .mensaje-exito { background: #d4edda; color: #155724; }
     .mensaje-error { background: #f8d7da; color: #721c24; }
-
-    .popup-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.7);
-        z-index: 30000;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .popup-contenido {
-        background: white;
-        width: 500px;
-        max-width: 90%;
-        max-height: 80%;
-        border-radius: 10px;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
-
-    .popup-header {
-        background: #2c3e50;
-        color: white;
-        padding: 15px 20px;
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .popup-header .cerrar {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 24px;
-        cursor: pointer;
-    }
-
-    .popup-body {
-        padding: 20px;
-        overflow-y: auto;
-    }
-
-    .form-agregar {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-
-    .form-agregar input {
-        flex: 1;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
-
-    .btn-agregar-popup {
-        background: #27ae60;
-        color: white;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .lista-codigos-popup {
-        list-style: none;
-    }
-
-    .lista-codigos-popup li {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px;
-        border-bottom: 1px solid #eee;
-    }
-
-    .btn-eliminar {
-        background: #e74c3c;
-        color: white;
-        border: none;
-        padding: 5px 12px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
-        box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    }
-
-    th {
-        background: #2c3e50;
-        color: white;
-        padding: 10px;
-        border: 1px solid #3e5a6b;
-    }
-
-    td {
-        padding: 8px;
-        border: 1px solid #ddd;
-        text-align: center;
-        background: white;
-    }
-
-    td[contenteditable="true"]:focus {
-        outline: 2px solid #3498db;
-        background: #e8f0fe;
-    }
-
-    .total {
-        color: #2e7d32;
-        font-size: 18px;
-        font-weight: bold;
-        background: #e8f5e9;
-    }
+    table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+    th { background: #2c3e50; color: white; padding: 10px; border: 1px solid #3e5a6b; }
+    td { padding: 8px; border: 1px solid #ddd; text-align: center; background: white; }
+    td[contenteditable="true"]:focus { outline: 2px solid #3498db; background: #e8f0fe; }
+    .total { color: #2e7d32; font-size: 18px; font-weight: bold; background: #e8f5e9; }
+    .autocomplete-container { position: relative; display: inline-block; width: 100%; }
+    .autocomplete-suggestions { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; max-height: 150px; overflow-y: auto; display: none; z-index: 1000; }
+    .autocomplete-suggestion { padding: 8px 12px; cursor: pointer; }
+    .autocomplete-suggestion:hover { background: #ecf0f1; }
 </style>
 </head>
 
 <body>
 
-<div id="pantallaBloqueo" class="pantalla-bloqueo">
+<!-- Pantalla de bloqueo TOTAL -->
+<div id="pantallaBloqueo" class="pantalla-bloqueo-total">
     <div class="mensaje-bloqueo">
-        <h1>🔒 Página Bloqueada</h1>
-        <p>El sistema ha sido desactivado</p>
-        <button class="btn-activar-desde-bloqueo" id="btnActivarDesdeBloqueo">🔓 HAZ CLIC PARA ACTIVAR</button>
+        <h1>🔒 ACCESO BLOQUEADO</h1>
+        <p id="mensajeBloqueoTexto">El administrador ha desactivado temporalmente el sistema</p>
+        <button class="btn-activar" id="btnSolicitarAcceso">🔓 Solicitar acceso</button>
     </div>
 </div>
 
-<button class="btn-abrir-panel" id="btnAbrirPanel">🎮 Panel de Control</button>
+<button class="btn-abrir-panel" id="btnAbrirPanel">🎮 Admin</button>
 
-<div class="popup-password" id="popupPassword">
-    <div class="password-contenido">
-        <h2>🔐 ACCESO RESTRINGIDO</h2>
-        <p>Ingrese la contraseña de administrador</p>
+<!-- Popup de contraseña -->
+<div id="popupPassword" class="popup-overlay">
+    <div class="popup-contenido">
+        <h2>🔐 Acceso Administrador</h2>
+        <p>Ingrese la contraseña para administrar el sistema</p>
         <input type="password" id="inputPassword" placeholder="Contraseña" autocomplete="off">
         <button id="btnVerificarPassword">Verificar</button>
         <div id="errorPassword" class="error-password"></div>
     </div>
 </div>
 
-<div class="popup-panel" id="popupPanel">
-    <div class="panel-contenido">
-        <h3>🎮 Panel de Control</h3>
-        <div class="botones-panel">
-            <button class="btn-panel btn-activar" id="btnActivarPanel">🔓 ACTIVAR TODO</button>
-            <button class="btn-panel btn-desactivar" id="btnDesactivarPanel">🔒 DESACTIVAR TODO</button>
+<!-- Popup del panel de control -->
+<div id="popupPanel" class="popup-overlay">
+    <div class="popup-contenido" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white;">
+        <h2>🎮 Panel de Control</h2>
+        <p style="margin-bottom: 20px;">Administra el acceso al sistema</p>
+        <button id="btnActivarSistema" style="background: #27ae60; margin: 10px; width: 80%;">🔓 ACTIVAR SISTEMA</button>
+        <button id="btnDesactivarSistema" style="background: #e74c3c; margin: 10px; width: 80%;">🔒 DESACTIVAR SISTEMA</button>
+        <hr style="margin: 20px; border-color: #444;">
+        <label>📝 Mensaje personalizado:</label>
+        <textarea id="mensajePersonalizado" rows="3" style="width: 100%; margin: 10px 0; padding: 10px; border-radius: 10px;"></textarea>
+        <button id="btnGuardarMensaje" style="background: #3498db; margin: 10px; width: 80%;">💾 Guardar Mensaje</button>
+        <hr style="margin: 20px; border-color: #444;">
+        <div id="estadoActualPanel" style="margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+            Estado: Cargando...
         </div>
-        <div class="estado-panel">
-            <p>📊 Estado actual:</p>
-            <div class="estado-indicador" id="estadoIndicadorPanel">Cargando...</div>
-        </div>
-        <button class="btn-panel btn-cerrar-panel" id="btnCerrarPanel">Cerrar</button>
+        <button id="btnCerrarPanel" style="background: #7f8c8d; margin-top: 20px; width: 80%;">Cerrar</button>
     </div>
 </div>
 
@@ -503,135 +264,169 @@
     <table id="tabla">
         <thead><tr><th>ID</th><th>Depósitos</th><th>Por donde recibe</th><th>Nombre del producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Subtotal</th><th>Precio de código</th><th>Código</th></tr></thead>
         <tbody id="cuerpoTabla"></tbody>
-        <tfoot><tr><td colspan="6" style="text-align: right; font-weight: bold;">TOTAL GENERAL:</td><td class="total" id="totalSubtotal">$0</td><td id="totalPrecioCodigo"></td><td></td></tr></tfoot>
+        <tfoot><tr><td colspan="6" style="text-align: right; font-weight: bold;">TOTAL GENERAL: </td><td class="total" id="totalSubtotal">$0</td><td id="totalPrecioCodigo"></td><td></td></tr>
+        </tfoot>
     </table>
 </div>
 
-<div id="popupCodigos" class="popup-overlay">
+<!-- Popup para códigos -->
+<div id="popupCodigos" class="popup-overlay" style="z-index: 1000001;">
     <div class="popup-contenido">
-        <div class="popup-header"><h3>📋 Administrar Códigos</h3><button class="cerrar" id="cerrarPopup">&times;</button></div>
-        <div class="popup-body">
-            <div class="form-agregar">
-                <input type="text" id="popupNuevoCodigo" placeholder="Código" autocomplete="off">
-                <input type="number" id="popupNuevoPrecio" placeholder="Precio" autocomplete="off">
-                <button class="btn-agregar-popup" id="btnAgregarPopup">➕ Agregar</button>
-            </div>
-            <div id="listaCodigosContainer"></div>
+        <div class="popup-header" style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+            <h3>📋 Administrar Códigos</h3>
+            <button id="cerrarPopup" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
         </div>
+        <div class="form-agregar" style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <input type="text" id="popupNuevoCodigo" placeholder="Código" autocomplete="off" style="flex:1; padding: 8px;">
+            <input type="number" id="popupNuevoPrecio" placeholder="Precio" autocomplete="off" style="flex:1; padding: 8px;">
+            <button id="btnAgregarPopup" style="background: #27ae60; color: white; border: none; padding: 8px 15px; border-radius: 5px;">➕ Agregar</button>
+        </div>
+        <div id="listaCodigosContainer"></div>
     </div>
 </div>
 
 <script>
-// CONTRASEÑA CORRECTA
-const CONTRASENA_CORRECTA = "DIEGO FERNANDO RANGEL CALDERON 2026 - 1995";
+// ============ CONFIGURACIÓN ============
+const CONTRASENA_ADMIN = "DIEGO FERNANDO RANGEL CALDERON 2026 - 1995";
+const STORAGE_ESTADO = "sistema_estado_global";
+const STORAGE_MENSAJE = "sistema_mensaje_global";
 
-// Estado de la página
-let paginaActiva = true;
+// Estado del sistema
+let sistemaActivo = true;
 let autenticado = false;
 
-// Función para guardar el estado en localStorage
-function guardarEstadoLocal(activo) {
-    localStorage.setItem('paginaActiva', activo ? 'true' : 'false');
-}
-
-function cargarEstadoLocal() {
-    const estado = localStorage.getItem('paginaActiva');
-    if (estado === null) {
-        guardarEstadoLocal(true);
-        return true;
-    }
-    return estado === 'true';
-}
-
-// Aplicar estado visual
-function aplicarEstadoVisual(activo) {
-    const pantallaBloqueo = document.getElementById('pantallaBloqueo');
-    const contenido = document.getElementById('contenidoPrincipal');
-    const indicador = document.getElementById('estadoIndicadorPanel');
-    
-    if (activo) {
-        pantallaBloqueo.classList.remove('activa');
-        contenido.style.visibility = 'visible';
-        if (indicador) {
-            indicador.innerHTML = 'ACTIVO';
-            indicador.className = 'estado-indicador estado-activo';
-        }
+// ============ FUNCIONES DE BLOQUEO ============
+function cargarEstado() {
+    const estadoGuardado = localStorage.getItem(STORAGE_ESTADO);
+    if (estadoGuardado === null) {
+        sistemaActivo = true;
+        localStorage.setItem(STORAGE_ESTADO, "activo");
     } else {
-        pantallaBloqueo.classList.add('activa');
-        contenido.style.visibility = 'hidden';
-        if (indicador) {
-            indicador.innerHTML = 'INACTIVO';
-            indicador.className = 'estado-indicador estado-inactivo';
+        sistemaActivo = estadoGuardado === "activo";
+    }
+    return sistemaActivo;
+}
+
+function guardarEstado(activo) {
+    sistemaActivo = activo;
+    localStorage.setItem(STORAGE_ESTADO, activo ? "activo" : "bloqueado");
+    aplicarBloqueo();
+}
+
+function cargarMensajeBloqueo() {
+    const mensaje = localStorage.getItem(STORAGE_MENSAJE);
+    if (mensaje) {
+        document.getElementById("mensajeBloqueoTexto").innerHTML = mensaje;
+    } else {
+        document.getElementById("mensajeBloqueoTexto").innerHTML = "El administrador ha desactivado temporalmente el sistema";
+    }
+}
+
+function guardarMensajeBloqueo(mensaje) {
+    localStorage.setItem(STORAGE_MENSAJE, mensaje);
+    document.getElementById("mensajeBloqueoTexto").innerHTML = mensaje;
+}
+
+function aplicarBloqueo() {
+    const pantallaBloqueo = document.getElementById("pantallaBloqueo");
+    const contenido = document.getElementById("contenidoPrincipal");
+    const btnAdmin = document.getElementById("btnAbrirPanel");
+    
+    if (!sistemaActivo) {
+        pantallaBloqueo.classList.add("activa");
+        contenido.style.visibility = "hidden";
+        contenido.style.height = "0";
+        contenido.style.overflow = "hidden";
+        btnAdmin.style.display = "block";
+    } else {
+        pantallaBloqueo.classList.remove("activa");
+        contenido.style.visibility = "visible";
+        contenido.style.height = "auto";
+        contenido.style.overflow = "visible";
+        btnAdmin.style.display = "block";
+    }
+}
+
+// ============ VERIFICACIÓN PERIÓDICA (para modo incógnito y sincronización) ============
+let ultimoEstado = null;
+
+function verificarEstadoPeriodicamente() {
+    const estadoActual = localStorage.getItem(STORAGE_ESTADO);
+    const activo = estadoActual === "activo" || estadoActual === null;
+    
+    if (ultimoEstado !== activo) {
+        ultimoEstado = activo;
+        sistemaActivo = activo;
+        aplicarBloqueo();
+        
+        // Mostrar mensaje de cambio
+        if (!activo) {
+            const msgDiv = document.getElementById("mensaje");
+            if (msgDiv) {
+                msgDiv.innerHTML = "🔒 Sistema bloqueado por el administrador";
+                msgDiv.className = "mensaje mensaje-error";
+                setTimeout(() => { msgDiv.innerHTML = ""; }, 3000);
+            }
         }
     }
 }
 
-// Activar/Desactivar
-function activarPagina() {
-    paginaActiva = true;
-    guardarEstadoLocal(true);
-    aplicarEstadoVisual(true);
-    mostrarMensaje('✅ Sistema ACTIVADO correctamente', 'exito');
-}
-
-function desactivarPagina() {
-    paginaActiva = false;
-    guardarEstadoLocal(false);
-    aplicarEstadoVisual(false);
-    guardarDatos();
-    mostrarMensaje('🔒 Sistema DESACTIVADO', 'exito');
-}
-
-// Popup de contraseña
+// ============ PANEL DE ADMINISTRACIÓN ============
 function mostrarPopupPassword() {
-    document.getElementById('popupPassword').classList.add('activo');
-    document.getElementById('inputPassword').value = '';
-    document.getElementById('errorPassword').innerHTML = '';
+    document.getElementById("popupPassword").classList.add("activo");
+    document.getElementById("inputPassword").value = "";
+    document.getElementById("errorPassword").innerHTML = "";
 }
 
 function ocultarPopupPassword() {
-    document.getElementById('popupPassword').classList.remove('activo');
+    document.getElementById("popupPassword").classList.remove("activo");
 }
 
 function verificarPassword() {
-    const password = document.getElementById('inputPassword').value;
-    if (password === CONTRASENA_CORRECTA) {
+    const password = document.getElementById("inputPassword").value;
+    if (password === CONTRASENA_ADMIN) {
         autenticado = true;
         ocultarPopupPassword();
         mostrarPopupPanel();
-        document.getElementById('errorPassword').innerHTML = '';
     } else {
-        document.getElementById('errorPassword').innerHTML = '❌ Contraseña incorrecta';
+        document.getElementById("errorPassword").innerHTML = "❌ Contraseña incorrecta";
     }
 }
 
-// Popup del panel
 function mostrarPopupPanel() {
     if (!autenticado) {
         mostrarPopupPassword();
         return;
     }
-    actualizarEstadoIndicador();
-    document.getElementById('popupPanel').classList.add('activo');
+    actualizarEstadoPanel();
+    document.getElementById("popupPanel").classList.add("activo");
 }
 
 function ocultarPopupPanel() {
-    document.getElementById('popupPanel').classList.remove('activo');
+    document.getElementById("popupPanel").classList.remove("activo");
 }
 
-function actualizarEstadoIndicador() {
-    const indicador = document.getElementById('estadoIndicadorPanel');
-    const activo = cargarEstadoLocal();
+function actualizarEstadoPanel() {
+    const estado = localStorage.getItem(STORAGE_ESTADO);
+    const activo = estado === "activo" || estado === null;
+    const estadoDiv = document.getElementById("estadoActualPanel");
+    const mensajeTextarea = document.getElementById("mensajePersonalizado");
+    
     if (activo) {
-        indicador.innerHTML = 'ACTIVO';
-        indicador.className = 'estado-indicador estado-activo';
+        estadoDiv.innerHTML = "Estado: 🟢 SISTEMA ACTIVO";
+        estadoDiv.style.background = "rgba(39, 174, 96, 0.3)";
     } else {
-        indicador.innerHTML = 'INACTIVO';
-        indicador.className = 'estado-indicador estado-inactivo';
+        estadoDiv.innerHTML = "Estado: 🔴 SISTEMA BLOQUEADO";
+        estadoDiv.style.background = "rgba(231, 76, 60, 0.3)";
+    }
+    
+    const mensaje = localStorage.getItem(STORAGE_MENSAJE);
+    if (mensajeTextarea) {
+        mensajeTextarea.value = mensaje || "El administrador ha desactivado temporalmente el sistema";
     }
 }
 
-// ========== FUNCIONES DE PRODUCTOS ==========
+// ============ FUNCIONES DE PRODUCTOS ============
 const metodos = ["EFECTIVO", "NEQUI", "DAVIPLATA", "DAVIVIENDA", "BANCOLOMBIA", "NU BANK", "BRE-B"];
 let codigosPrecios = {};
 
@@ -646,17 +441,17 @@ function actualizarListaPopup() {
     const container = document.getElementById("listaCodigosContainer");
     if (!container) return;
     if (Object.keys(codigosPrecios).length === 0) {
-        container.innerHTML = '<div class="sin-codigos">No hay códigos</div>';
+        container.innerHTML = '<div>No hay códigos</div>';
         return;
     }
-    let html = '<ul class="lista-codigos-popup">';
+    let html = '<ul style="list-style: none;">';
     for (const [codigo, precio] of Object.entries(codigosPrecios)) {
-        html += `<li><span>${codigo} - $${precio.toLocaleString("es-CO")}</span><button class="btn-eliminar" data-codigo="${codigo}">🗑️</button></li>`;
+        html += `<li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee;"><span>${codigo} - $${precio.toLocaleString("es-CO")}</span><button class="btn-eliminar" data-codigo="${codigo}" style="background: #e74c3c; color: white; border: none; padding: 5px 12px; border-radius: 5px;">🗑️</button></li>`;
     }
     html += '</ul>';
     container.innerHTML = html;
     document.querySelectorAll('.btn-eliminar').forEach(btn => {
-        btn.addEventListener('click', () => { delete codigosPrecios[btn.dataset.codigo]; guardarCodigos(); actualizarListaPopup(); mostrarMensaje('✅ Código eliminado', 'exito'); });
+        btn.addEventListener('click', () => { delete codigosPrecios[btn.dataset.codigo]; guardarCodigos(); actualizarListaPopup(); mostrarMensaje('✅ Eliminado', 'exito'); });
     });
 }
 
@@ -810,21 +605,41 @@ function mostrarMensaje(texto, tipo) {
     setTimeout(() => { if (msgDiv.innerHTML === texto) { msgDiv.innerHTML = ""; msgDiv.className = "mensaje"; } }, 3000);
 }
 
-function abrirPopup() { actualizarListaPopup(); document.getElementById("popupCodigos").style.display = "flex"; }
-function cerrarPopup() { document.getElementById("popupCodigos").style.display = "none"; }
+function abrirPopupCodigos() { actualizarListaPopup(); document.getElementById("popupCodigos").style.display = "flex"; }
+function cerrarPopupCodigos() { document.getElementById("popupCodigos").style.display = "none"; }
 
-// Eventos
+// ============ EVENTOS ============
 document.getElementById("btnAbrirPanel").onclick = mostrarPopupPassword;
 document.getElementById("btnVerificarPassword").onclick = verificarPassword;
 document.getElementById("inputPassword").onkeypress = (e) => { if (e.key === 'Enter') verificarPassword(); };
-document.getElementById("btnActivarPanel").onclick = () => { activarPagina(); ocultarPopupPanel(); };
-document.getElementById("btnDesactivarPanel").onclick = () => { desactivarPagina(); ocultarPopupPanel(); };
 document.getElementById("btnCerrarPanel").onclick = ocultarPopupPanel;
-document.getElementById("btnActivarDesdeBloqueo").onclick = mostrarPopupPassword;
+document.getElementById("btnSolicitarAcceso").onclick = mostrarPopupPassword;
+
+document.getElementById("btnActivarSistema").onclick = () => {
+    guardarEstado(true);
+    actualizarEstadoPanel();
+    ocultarPopupPanel();
+    mostrarMensaje("✅ Sistema ACTIVADO correctamente", "exito");
+};
+
+document.getElementById("btnDesactivarSistema").onclick = () => {
+    guardarEstado(false);
+    actualizarEstadoPanel();
+    ocultarPopupPanel();
+    mostrarMensaje("🔒 Sistema DESACTIVADO correctamente", "exito");
+};
+
+document.getElementById("btnGuardarMensaje").onclick = () => {
+    const mensaje = document.getElementById("mensajePersonalizado").value;
+    guardarMensajeBloqueo(mensaje);
+    actualizarEstadoPanel();
+    mostrarMensaje("✅ Mensaje guardado", "exito");
+};
+
 document.getElementById("btnGuardar").onclick = guardarDatos;
 document.getElementById("btnExportar").onclick = exportarAExcel;
-document.getElementById("btnAdministrar").onclick = abrirPopup;
-document.getElementById("cerrarPopup").onclick = cerrarPopup;
+document.getElementById("btnAdministrar").onclick = abrirPopupCodigos;
+document.getElementById("cerrarPopup").onclick = cerrarPopupCodigos;
 document.getElementById("btnAgregarPopup").onclick = agregarCodigo;
 
 document.getElementById("tabla").addEventListener("input", function(e) {
@@ -839,16 +654,24 @@ document.getElementById("tabla").addEventListener("input", function(e) {
     }
 });
 
-// Inicializar
+// ============ INICIALIZACIÓN ============
 crearFilas(100);
 cargarCodigos();
 cargarDatos();
+cargarEstado();
+cargarMensajeBloqueo();
+aplicarBloqueo();
 calcularTotalGeneral();
 
-// Cargar estado guardado
-const estadoInicial = cargarEstadoLocal();
-paginaActiva = estadoInicial;
-aplicarEstadoVisual(estadoInicial);
+// Verificar estado cada segundo (para modo incógnito)
+setInterval(verificarEstadoPeriodicamente, 1000);
+
+// También verificar cuando la página se hace visible (pestaña activa)
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+        verificarEstadoPeriodicamente();
+    }
+});
 </script>
 
 </body>
